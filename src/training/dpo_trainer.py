@@ -89,7 +89,7 @@ def main():
         ref_model=None, # DPOTrainer handles this automatically when using PEFT
         args=training_args,
         train_dataset=train_dataset,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
     )
     
     print("Starting DPO Training (Alignment)...")
