@@ -12,23 +12,26 @@ def load_config():
         return yaml.safe_load(f)
 
 def format_dpo_prompt(example):
-    # Ultrafeedback returns prompt, chosen, rejected as lists of dicts
-    # DPOTrainer requires them to be strings or prompt-formatted strings.
-    # We create simple string representations.
-    def to_string(messages):
-        text = ""
-        for msg in messages:
-            text += f"<|{msg['role']}|>\n{msg['content']}</s>\n"
-        return text
-
-    prompt = to_string(example['prompt'])
-    chosen = to_string(example['chosen'])
-    rejected = to_string(example['rejected'])
+    # In ultrafeedback_binarized, 'prompt' is a string.
+    # 'chosen' and 'rejected' are lists of dicts (e.g. [{'role': 'user', 'content': '...'}, {'role': 'assistant', 'content': '...'}])
     
+    prompt_str = f"<|user|>\n{example['prompt']}</s>\n<|assistant|>\n"
+    
+    # DPOTrainer expects 'chosen' and 'rejected' to be just the assistant's continuation
+    chosen_content = ""
+    for msg in example['chosen']:
+        if msg['role'] == 'assistant':
+            chosen_content += msg['content'] + "</s>\n"
+            
+    rejected_content = ""
+    for msg in example['rejected']:
+        if msg['role'] == 'assistant':
+            rejected_content += msg['content'] + "</s>\n"
+            
     return {
-        "prompt": prompt,
-        "chosen": chosen,
-        "rejected": rejected,
+        "prompt": prompt_str,
+        "chosen": chosen_content,
+        "rejected": rejected_content,
     }
 
 def main():
