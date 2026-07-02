@@ -74,7 +74,7 @@ def main():
         fp16=True,
         seed=config['training']['seed'],
         dataset_text_field="text",
-        max_seq_length=config['training']['max_seq_length']
+        max_length=config['training']['max_seq_length']
     )
     
     trainer = SFTTrainer(
