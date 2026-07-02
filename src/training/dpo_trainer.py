@@ -54,7 +54,7 @@ def main():
         base_model_id,
         quantization_config=quantization_config,
         device_map="auto",
-        torch_dtype=torch.float16
+        dtype=torch.float16
     )
     
     model = prepare_model_for_kbit_training(model)

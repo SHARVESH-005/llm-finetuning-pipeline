@@ -41,7 +41,7 @@ def main():
         model_id,
         quantization_config=quantization_config,
         device_map="auto",
-        torch_dtype=torch.float16
+        dtype=torch.float16
     )
     
     # Prepare model for PEFT
