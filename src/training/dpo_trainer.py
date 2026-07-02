@@ -65,7 +65,8 @@ def main():
     train_dataset = load_from_disk(os.path.join(config['data']['processed_dir'], 'train'))
     train_dataset = train_dataset.map(format_dpo_prompt, remove_columns=train_dataset.column_names)
 
-    training_args = TrainingArguments(
+    from trl import DPOConfig
+    training_args = DPOConfig(
         output_dir=out_dir,
         per_device_train_batch_size=config['training']['batch_size'],
         gradient_accumulation_steps=config['training']['gradient_accumulation_steps'],
@@ -76,7 +77,10 @@ def main():
         save_steps=config['training']['save_steps'],
         optim="paged_adamw_32bit",
         fp16=True,
-        remove_unused_columns=False # Required for DPOTrainer
+        remove_unused_columns=False, # Required for DPOTrainer
+        beta=config['dpo']['beta'],
+        max_length=config['training']['max_seq_length'],
+        max_prompt_length=config['training']['max_seq_length'] // 2,
     )
     
     print("Initializing DPOTrainer...")
@@ -84,11 +88,8 @@ def main():
         model,
         ref_model=None, # DPOTrainer handles this automatically when using PEFT
         args=training_args,
-        beta=config['dpo']['beta'],
         train_dataset=train_dataset,
         tokenizer=tokenizer,
-        max_length=config['training']['max_seq_length'],
-        max_prompt_length=config['training']['max_seq_length'] // 2,
     )
     
     print("Starting DPO Training (Alignment)...")

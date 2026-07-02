@@ -60,7 +60,8 @@ def main():
     # Format dataset for causal language modeling
     train_dataset = train_dataset.map(format_sft_prompt, remove_columns=train_dataset.column_names)
 
-    training_args = TrainingArguments(
+    from trl import SFTConfig
+    training_args = SFTConfig(
         output_dir=out_dir,
         per_device_train_batch_size=config['training']['batch_size'],
         gradient_accumulation_steps=config['training']['gradient_accumulation_steps'],
@@ -71,15 +72,15 @@ def main():
         save_steps=config['training']['save_steps'],
         optim="paged_adamw_32bit",
         fp16=True,
-        seed=config['training']['seed']
+        seed=config['training']['seed'],
+        dataset_text_field="text",
+        max_seq_length=config['training']['max_seq_length']
     )
     
     trainer = SFTTrainer(
         model=model,
         train_dataset=train_dataset,
         peft_config=peft_config,
-        dataset_text_field="text",
-        max_seq_length=config['training']['max_seq_length'],
         tokenizer=tokenizer,
         args=training_args,
     )
