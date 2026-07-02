@@ -2,7 +2,7 @@ import os
 import yaml
 import torch
 from datasets import load_from_disk
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
+from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments, BitsAndBytesConfig
 from peft import LoraConfig, PeftModel, prepare_model_for_kbit_training
 from trl import DPOTrainer
 
@@ -45,9 +45,10 @@ def main():
     # For DPO we need the model and a reference model. 
     # Usually we load the SFT model as 'model', and base model as 'ref_model'.
     # DPOTrainer can automatically create a ref model by disabling adapters if we use PEFT.
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(
         base_model_id,
-        load_in_4bit=True,
+        quantization_config=quantization_config,
         device_map="auto",
         torch_dtype=torch.float16
     )

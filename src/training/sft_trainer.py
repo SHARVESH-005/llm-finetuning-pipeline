@@ -2,7 +2,7 @@ import os
 import yaml
 import torch
 from datasets import load_from_disk
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
+from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments, BitsAndBytesConfig
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from trl import SFTTrainer
 
@@ -31,10 +31,11 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     tokenizer.pad_token = tokenizer.eos_token
 
-    # Load Model with 4-bit quantization (QLoRA)
+    # Load Model with 4-bit quantization (QLoRA) using BitsAndBytesConfig
+    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
-        load_in_4bit=True,
+        quantization_config=quantization_config,
         device_map="auto",
         torch_dtype=torch.float16
     )
