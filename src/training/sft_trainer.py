@@ -32,7 +32,11 @@ def main():
     tokenizer.pad_token = tokenizer.eos_token
 
     # Load Model with 4-bit quantization (QLoRA) using BitsAndBytesConfig
-    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+    quantization_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_quant_type="nf4"
+    )
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         quantization_config=quantization_config,

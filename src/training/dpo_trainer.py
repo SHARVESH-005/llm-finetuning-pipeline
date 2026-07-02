@@ -45,7 +45,11 @@ def main():
     # For DPO we need the model and a reference model. 
     # Usually we load the SFT model as 'model', and base model as 'ref_model'.
     # DPOTrainer can automatically create a ref model by disabling adapters if we use PEFT.
-    quantization_config = BitsAndBytesConfig(load_in_4bit=True)
+    quantization_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_quant_type="nf4"
+    )
     model = AutoModelForCausalLM.from_pretrained(
         base_model_id,
         quantization_config=quantization_config,
