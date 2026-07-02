@@ -80,7 +80,6 @@ def main():
     trainer = SFTTrainer(
         model=model,
         train_dataset=train_dataset,
-        peft_config=peft_config,
         processing_class=tokenizer,
         args=training_args,
     )
