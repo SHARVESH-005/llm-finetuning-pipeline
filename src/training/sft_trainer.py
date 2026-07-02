@@ -75,7 +75,8 @@ def main():
         save_strategy="steps",
         save_steps=config['training']['save_steps'],
         optim="paged_adamw_32bit",
-        fp16=True,
+        fp16=False,
+        bf16=False,
         seed=config['training']['seed'],
         dataset_text_field="text",
         max_length=config['training']['max_seq_length']
