@@ -86,9 +86,7 @@ def main():
         fp16=False,
         bf16=False,
         remove_unused_columns=False, # Required for DPOTrainer
-        beta=config['dpo']['beta'],
-        max_length=config['training']['max_seq_length'],
-        max_prompt_length=config['training']['max_seq_length'] // 2,
+        beta=config['dpo']['beta']
     )
     
     print("Initializing DPOTrainer...")
