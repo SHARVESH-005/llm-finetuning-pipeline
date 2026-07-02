@@ -1,0 +1,40 @@
+model:
+  base_model_name_or_path: "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+  sft_adapter_path: "./models/sft_adapter"
+  dpo_adapter_path: "./models/dpo_adapter"
+  final_merged_path: "./models/final_model"
+
+data:
+  dataset_name: "HuggingFaceH4/ultrafeedback_binarized"
+  train_split: "train_prefs"
+  test_split: "test_prefs"
+  processed_dir: "./data/processed"
+
+training:
+  seed: 42
+  max_seq_length: 512
+  batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 2e-4
+  num_train_epochs: 1
+  save_steps: 50
+  logging_steps: 10
+
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+
+dpo:
+  beta: 0.1
+  learning_rate: 5e-5
+
+serving:
+  host: "0.0.0.0"
+  port: 8000
+  tensor_parallel_size: 1
